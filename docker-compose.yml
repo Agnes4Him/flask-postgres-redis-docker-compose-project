@@ -2,7 +2,7 @@ networks:
   flask-app:
 services:
   app:
-    image: flask-crud-api:v1.0
+    image: agnes4im/flask-crud-api:v1.0
     ports:
       - 5000:5000
     environment:
