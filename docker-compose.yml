@@ -1,0 +1,47 @@
+networks:
+  flask-app:
+services:
+  app:
+    image: flask-crud-api:v1.0
+    ports:
+      - 5000:5000
+    environment:
+      DB_HOST: db
+      DB_USER: flask
+      DB_PASSWORD: <POSTGRES_PASSWORD>
+      DB_PORT: 5432
+      DB_NAME: flask_db
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+    networks:
+      - flask-app
+    depends_on:
+      db:
+        condition: service_started
+      cache:
+        condition: service_started
+  db:
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: flask
+      POSTGRES_PASSWORD: <POSTGRES_PASSWORD>
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data 
+    networks:
+      - flask-app
+  cache:
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - ./data/redis_data:/data
+    networks:
+      - flask-app
+volumes:
+  pgdata:
+  redis_data:
